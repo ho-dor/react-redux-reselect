@@ -1,26 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect} from 'react';
 import './App.css';
+import {connect} from 'react-redux';
+import { increment,getData } from './store/number/actions';
+import { getNumber, getName } from './store/number/selector';
 
-function App() {
+const App = ({number, increment, loading, error, names, getData}) => {
+
+  useEffect(()=>{
+    getData()
+  })
+
+  const handleClick = ()=> increment(number+1);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div>
+        <button onClick={handleClick}>Increase</button>
+      </div>
+      <div>
+        <span>{number}</span>
+      </div>
+      <div>
+        {loading ? <h1>Loading...</h1>: names}
+      </div>
     </div>
   );
 }
 
-export default App;
+const mapStateToProps = (state)=>{
+  return {
+    number: getNumber(state),
+    loading: state.number.loading,
+    error: state.number.error,
+    names: getName(state)
+  }
+  
+}
+
+const mapDispatchToProps = {
+    increment,
+    getData
+  }
+
+  
+
+
+export default connect(mapStateToProps,mapDispatchToProps)(App);
